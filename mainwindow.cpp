@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+//#include "dialog.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -19,6 +21,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&(this->dbControl), &DB_Control::conn, this, &MainWindow::yes_connect);
     connect(&(this->dbControl), &DB_Control::disConn, this, &MainWindow::no_connect);
+
+    connect(&(this->modalWindow), &Dialog::startShow, &(this->dbControl), &DB_Control::searchYearStat);
+    connect(&(this->modalWindow), &Dialog::startClean, &(this->dbControl), &DB_Control::cleanYearStat);
 }
 
 MainWindow::~MainWindow()
@@ -67,14 +72,16 @@ void MainWindow::on_showOneAirport_clicked()
 
     if(ui->searchVarible->currentText() == "Прилёт")
     {
-        /*qDebug()<<"Prilet!";
-        qDebug()<<codeAirport;*/
         this->dbControl.inAirport(ui->infoOutput, codeAirport);
     }
     else
     {
-        /*qDebug()<<"Otlet!";
-        qDebug()<<codeAirport;*/
         this->dbControl.outAirport(ui->infoOutput, codeAirport);
     }
 }
+
+void MainWindow::on_StatYear_clicked()
+{
+    this->modalWindow.exec();
+}
+

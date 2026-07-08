@@ -8,6 +8,14 @@
 #include <QSqlQueryModel>
 #include <QSqlQuery>
 
+#include <QtCharts/QChartView>
+
+#include <QtCharts/QBarSeries>
+#include <QtCharts/QBarSet>
+#include <QtCharts/QBarCategoryAxis>
+#include <QtCharts/QValueAxis>
+#include <QDateTime>
+
 class DB_Control: public QObject
 {
     Q_OBJECT
@@ -22,9 +30,17 @@ public:
     void inAirport(QTableView* table, QString code);
     void outAirport(QTableView* table, QString code);
 
+    void searchYearStat(QChartView *chartView, QString code);
+    void cleanYearStat(QChartView* chartView);
+
 private:
     QSqlDatabase aviaFlights;
     QSqlQueryModel *model;
+    /*QBarSet *barSet;
+    QBarSeries *series;
+    QChart *chart;
+    QBarCategoryAxis *axisX;
+    QValueAxis *axisY;*/
 
 signals:
     void conn();

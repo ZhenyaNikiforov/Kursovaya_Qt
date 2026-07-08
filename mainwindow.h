@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "db_control.h"
+#include "dialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -22,6 +23,7 @@ private:
     Ui::MainWindow *ui;
 
     DB_Control dbControl;
+    Dialog modalWindow;
 
 private slots:
     void on_connectButton_clicked();//- подключение/отключение
@@ -29,7 +31,10 @@ private slots:
     void on_cleanDisplay_clicked();//-очищает дисплей
     void on_showOneAirport_clicked();//- показывает по выбранному аэропорту
 
+    void on_StatYear_clicked();//- открывает статистику за год
+
     void yes_connect();//- разблокировка кнопок
     void no_connect();//- блокировка кнопок
 };
+
 #endif // MAINWINDOW_H
