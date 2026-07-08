@@ -33,14 +33,11 @@ public:
     void searchYearStat(QChartView *chartView, QString code);
     void cleanYearStat(QChartView* chartView);
 
+    void searchMonthStat(QString code, QString start, QString end, QTableView *table);
+
 private:
     QSqlDatabase aviaFlights;
     QSqlQueryModel *model;
-    /*QBarSet *barSet;
-    QBarSeries *series;
-    QChart *chart;
-    QBarCategoryAxis *axisX;
-    QValueAxis *axisY;*/
 
 signals:
     void conn();

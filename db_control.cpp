@@ -163,3 +163,28 @@ void DB_Control::cleanYearStat(QChartView* chartView){
         oldChart->deleteLater();
     }
 }
+
+void DB_Control::searchMonthStat(QString code, QString start, QString end, QTableView *table)
+{
+    qDebug()<<"code: "<<code;
+    qDebug()<<"start: "<<start;
+    qDebug()<<"end: "<<end;
+    QSqlQuery query(this->aviaFlights);
+    query.prepare(R"(
+        SELECT count(flight_no), date_trunc('day', scheduled_departure) as "Day"
+        FROM bookings.flights f
+        WHERE (scheduled_departure::date > date(:start)
+        AND scheduled_departure::date <= date(:end))
+        AND (departure_airport = :code OR arrival_airport = :code)
+        GROUP BY "Day"
+    )");
+
+    query.bindValue(":code", code);
+    query.bindValue(":start", start);
+    query.bindValue(":end", end);
+
+    query.exec();
+
+    this->model->setQuery(std::move(query));
+    table->setModel(this->model);
+}

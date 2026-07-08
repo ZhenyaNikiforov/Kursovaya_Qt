@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(&(this->modalWindow), &Dialog::startShow, &(this->dbControl), &DB_Control::searchYearStat);
     connect(&(this->modalWindow), &Dialog::startClean, &(this->dbControl), &DB_Control::cleanYearStat);
+
+    connect(&(this->chartWindow), &ChartDialog::searchMonthStat, &(this->dbControl), &DB_Control::searchMonthStat);
 }
 
 MainWindow::~MainWindow()
@@ -82,6 +84,13 @@ void MainWindow::on_showOneAirport_clicked()
 
 void MainWindow::on_StatYear_clicked()
 {
+    this->modalWindow.setWindowTitle("Статистика за год");
     this->modalWindow.exec();
 }
 
+void MainWindow::on_StatDay_clicked()
+{
+    this->chartWindow.setWindowTitle("Статистика по месяцам");
+    this->chartWindow.exec();
+    this->chartWindow.startValue();
+}

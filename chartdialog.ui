@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ChartDialog</class>
+ <widget class="QDialog" name="ChartDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>570</width>
+    <height>357</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QTableView" name="tableView"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Вводим код аэропорта</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLineEdit" name="insertCode"/>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>И месяц</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="selectMonth">
+     <item>
+      <property name="text">
+       <string>Январь</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Февраль</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Март</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Апрель</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Май</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Июнь</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Июль</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Август</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Сентябрь</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Октябрь</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Ноябрь</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Декабрь</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
