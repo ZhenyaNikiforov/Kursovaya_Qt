@@ -92,5 +92,4 @@ void MainWindow::on_StatDay_clicked()
 {
     this->chartWindow.setWindowTitle("Статистика по месяцам");
     this->chartWindow.exec();
-    this->chartWindow.startValue();
 }

@@ -20,7 +20,14 @@ void DB_Control::connect(){
         this->aviaFlights.close();
         emit this->disConn();
     }else{
-        this->aviaFlights.open();
+        if(!this->aviaFlights.open()){
+            QString errorText = this->aviaFlights.lastError().text();
+            qDebug() << "Критическая ошибка подключения к БД:" << errorText;
+            QMessageBox::critical(nullptr,
+            QString::fromUtf8("Ошибка подключения"),
+            QString::fromUtf8("Не удалось соединиться с базой данных.\n") + errorText);
+            return;
+        }
         emit this->conn();
     }
 }
@@ -34,7 +41,11 @@ void DB_Control::showAll(QTableView* table){
         FROM bookings.airports_data
     )");
 
-    query.exec();
+    if(!query.exec()){
+        QString errorMessage = query.lastError().text();
+        qDebug()<<"Ошибка выполнения запроса: "<<errorMessage;
+        return;
+    }
 
     this->model->setQuery(std::move(query));
 
@@ -53,14 +64,19 @@ void DB_Control::inAirport(QTableView* table, QString code)
     QSqlQuery query(this->aviaFlights);
 
     query.prepare(R"(
-        SELECT flight_no, scheduled_arrival, ad.airport_name->>'ru' as Name from bookings.flights f
+        SELECT flight_no, scheduled_arrival, ad.airport_name->>'ru' as "Name" from bookings.flights f
         JOIN bookings.airports_data ad on ad.airport_code = f.departure_airport
         where f.arrival_airport  = :code
     )");
 
     query.bindValue(":code", code);
 
-    query.exec();
+    if(!query.exec()){
+        QString errorMessage = query.lastError().text();
+        qDebug()<<"Ошибка выполнения запроса: "<<errorMessage;
+        return;
+    }
+
     this->model->setQuery(std::move(query));
 
     this->model->setHeaderData(0, Qt::Horizontal, "Номер");
@@ -75,14 +91,19 @@ void DB_Control::outAirport(QTableView* table, QString code)
     QSqlQuery query(this->aviaFlights);
 
     query.prepare(R"(
-        SELECT flight_no, scheduled_departure, ad.airport_name->>'ru' as Name from bookings.flights f
+        SELECT flight_no, scheduled_departure, ad.airport_name->>'ru' as "Name" from bookings.flights f
         JOIN bookings.airports_data ad on ad.airport_code = f.arrival_airport
         WHERE f.departure_airport  = :code
     )");
 
     query.bindValue(":code", code);
 
-    query.exec();
+    if(!query.exec()){
+        QString errorMessage = query.lastError().text();
+        qDebug()<<"Ошибка выполнения запроса: "<<errorMessage;
+        return;
+    }
+
     this->model->setQuery(std::move(query));
 
     this->model->setHeaderData(0, Qt::Horizontal, "Номер");
@@ -95,16 +116,23 @@ void DB_Control::outAirport(QTableView* table, QString code)
 void DB_Control::searchYearStat(QChartView *chartView, QString code)
 {
     QSqlQuery query(this->aviaFlights);
+
     query.prepare(R"(
-        SELECT count(flight_no), date_trunc('month', scheduled_departure) as Month
+        SELECT count(flight_no), date_trunc('month', scheduled_departure) as "Month"
         FROM bookings.flights f
         WHERE (scheduled_departure::date > date('2016-08-31')
         AND scheduled_departure::date <= date('2017-08-31'))
         AND ( departure_airport = :code or arrival_airport = :code)
-        group by Month
-)");
+        group by "Month"
+    )");
+
     query.bindValue(":code", code);
-    query.exec();
+
+    if(!query.exec()){
+        QString errorMessage = query.lastError().text();
+        qDebug()<<"Ошибка выполнения запроса: "<<errorMessage;
+        return;
+    }
 
     QBarSet *barSet = new QBarSet("Количество рейсов");
     QStringList categories;
@@ -166,9 +194,6 @@ void DB_Control::cleanYearStat(QChartView* chartView){
 
 void DB_Control::searchMonthStat(QString code, QString start, QString end, QTableView *table)
 {
-    qDebug()<<"code: "<<code;
-    qDebug()<<"start: "<<start;
-    qDebug()<<"end: "<<end;
     QSqlQuery query(this->aviaFlights);
     query.prepare(R"(
         SELECT count(flight_no), date_trunc('day', scheduled_departure) as "Day"
@@ -183,7 +208,11 @@ void DB_Control::searchMonthStat(QString code, QString start, QString end, QTabl
     query.bindValue(":start", start);
     query.bindValue(":end", end);
 
-    query.exec();
+    if(!query.exec()){
+        QString errorMessage = query.lastError().text();
+        qDebug()<<"Ошибка выполнения запроса: "<<errorMessage;
+        return;
+    }
 
     this->model->setQuery(std::move(query));
     table->setModel(this->model);

@@ -16,6 +16,8 @@
 #include <QtCharts/QValueAxis>
 #include <QDateTime>
 
+#include <QMessageBox>
+
 class DB_Control: public QObject
 {
     Q_OBJECT

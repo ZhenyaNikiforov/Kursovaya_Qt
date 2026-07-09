@@ -4,6 +4,8 @@
 #include <QDialog>
 #include <QTableView>
 
+#pragma once//---/?
+
 namespace Ui {
 class ChartDialog;
 }
@@ -15,7 +17,9 @@ class ChartDialog : public QDialog
 public:
     explicit ChartDialog(QWidget *parent = nullptr);
     ~ChartDialog();
-    void startValue();
+
+protected://--это для начального значения
+    void showEvent(QShowEvent *event) override;
 
 private:
     Ui::ChartDialog *ui;

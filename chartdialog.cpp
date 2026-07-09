@@ -59,6 +59,8 @@ void ChartDialog::on_selectMonth_currentTextChanged(const QString &text)
     emit ChartDialog::searchMonthStat(ui->insertCode->text(), start, end, ui->tableView);
 }
 
-void ChartDialog::startValue(){
-    emit ChartDialog::searchMonthStat("Декабрь", "2016-11-30", "2016-12-31", ui->tableView);
+void ChartDialog::showEvent(QShowEvent *event){
+    QDialog::showEvent(event);
+    ui->insertCode->setText("YKS");
+    emit ChartDialog::searchMonthStat("YKS", "2016-12-31", "2017-01-30", ui->tableView);
 }
