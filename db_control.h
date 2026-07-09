@@ -17,6 +17,10 @@
 #include <QDateTime>
 
 #include <QMessageBox>
+#include <QVBoxLayout>
+#include <QLineSeries>
+#include <QSplineSeries>
+#include <QDateTimeAxis>
 
 class DB_Control: public QObject
 {
@@ -35,7 +39,7 @@ public:
     void searchYearStat(QChartView *chartView, QString code);
     void cleanYearStat(QChartView* chartView);
 
-    void searchMonthStat(QString code, QString start, QString end, QTableView *table);
+    void searchMonthStat(QString code, QString start, QString end, QVBoxLayout *vertical);
 
 private:
     QSqlDatabase aviaFlights;

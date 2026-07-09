@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QTableView>
+#include <QVBoxLayout>
 
 #pragma once//---/?
 
@@ -28,7 +29,7 @@ private slots:
     void on_selectMonth_currentTextChanged(const QString &text);
 
 signals:
-    void searchMonthStat(QString code, QString start, QString end, QTableView *table);
+    void searchMonthStat(QString code, QString start, QString end, QVBoxLayout *vertical);
 };
 
 #endif // CHARTDIALOG_H

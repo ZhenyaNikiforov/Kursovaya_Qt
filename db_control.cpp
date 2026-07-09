@@ -124,6 +124,7 @@ void DB_Control::searchYearStat(QChartView *chartView, QString code)
         AND scheduled_departure::date <= date('2017-08-31'))
         AND ( departure_airport = :code or arrival_airport = :code)
         group by "Month"
+        ORDER BY "Month" ASC
     )");
 
     query.bindValue(":code", code);
@@ -153,23 +154,20 @@ void DB_Control::searchYearStat(QChartView *chartView, QString code)
     }
 
     QBarSeries *series = new QBarSeries();
-    series->append(barSet);
+
+    series->append(barSet); //-добавляем в серию набор столбов
 
     QChart *chart = new QChart();
     chart->addSeries(series);
     chart->setTitle("Статистика перелетов за год для порта: " + code);
     chart->setAnimationOptions(QChart::SeriesAnimations);
 
-    QBarCategoryAxis *axisX = new QBarCategoryAxis();
+    auto *axisX = new QBarCategoryAxis();
     axisX->append(categories);
     chart->addAxis(axisX, Qt::AlignBottom);
     series->attachAxis(axisX);
 
-    QValueAxis *axisY = new QValueAxis();
-    axisY->setRange(0, maxFlights * 1.1);
-    axisY->setLabelFormat("%d");
-    chart->addAxis(axisY, Qt::AlignLeft);
-    series->attachAxis(axisY);
+    chart->createDefaultAxes();
 
     chart->legend()->setVisible(true);
     chart->legend()->setAlignment(Qt::AlignBottom);
@@ -192,8 +190,16 @@ void DB_Control::cleanYearStat(QChartView* chartView){
     }
 }
 
-void DB_Control::searchMonthStat(QString code, QString start, QString end, QTableView *table)
+void DB_Control::searchMonthStat(QString code, QString start, QString end, QVBoxLayout *vertical)
 {
+    while (vertical->count() > 0) {
+        QLayoutItem *item = vertical->takeAt(0);
+        if (item->widget()) {
+            delete item->widget(); // Удаляет QChartView со все вместе
+        }
+        delete item;
+    }
+
     QSqlQuery query(this->aviaFlights);
     query.prepare(R"(
         SELECT count(flight_no), date_trunc('day', scheduled_departure) as "Day"
@@ -202,6 +208,7 @@ void DB_Control::searchMonthStat(QString code, QString start, QString end, QTabl
         AND scheduled_departure::date <= date(:end))
         AND (departure_airport = :code OR arrival_airport = :code)
         GROUP BY "Day"
+        ORDER BY "Day" ASC
     )");
 
     query.bindValue(":code", code);
@@ -214,6 +221,40 @@ void DB_Control::searchMonthStat(QString code, QString start, QString end, QTabl
         return;
     }
 
-    this->model->setQuery(std::move(query));
-    table->setModel(this->model);
+    auto *series = new QSplineSeries();
+    int dayIndex = 1; // Просто счетчик дней (1, 2, 3...) для оси X
+    bool hasData = false;
+
+    while (query.next()) {
+        hasData = true;
+        int count = query.value(0).toInt();
+
+        // Добавляем точку: X — порядковый номер дня, Y — количество рейсов
+        series->append(dayIndex, count);
+        dayIndex++;
+    }
+
+    // Если база данных ничего не вернула, прерываемся
+    if (!hasData) {
+        qDebug() << "База данных вернула 0 строк для кода:" << code;
+        delete series;
+        return;
+    }
+
+    auto *chart = new QChart();
+    chart->addSeries(series); // Добавляем линию
+    chart->setTitle("Динамика перелетов (по дням)");
+    chart->legend()->hide();
+
+    chart->createDefaultAxes();
+
+    //--это для красоты
+    QPen pen(QColor("#007ACC"));
+    pen.setWidth(3); // Сделаем плавную линию толще
+    series->setPen(pen);
+
+    auto *chartView = new QChartView(chart);
+    chartView->setRenderHint(QPainter::Antialiasing); // Гладкая линия
+
+    vertical->addWidget(chartView);
 }
